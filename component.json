@@ -1,0 +1,14 @@
+{
+  "name": "jquery.atd.textarea",
+  "repo": "zergleb/jquery.atd.textarea",
+  "description": "Used to check text areas for spell checking errors using against the deadline as a server solution",
+  "version": "1.0.0",
+  "keywords": ["jquery"],
+  "dependencies": {
+    "zergleb/jquery": "*"
+  },
+  "scripts": [
+    "index.js"
+  ],
+  "license": "MIT"
+}
