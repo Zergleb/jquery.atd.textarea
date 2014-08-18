@@ -1,9 +1,9 @@
 var AtD;
 
 var jQuery = require("jquery");
-var CSSHttpRequest= require("csshttprequest")
+var csshttprequest = require("csshttprequest")
 
-(function(jQuery, CSSHttpRequest){
+(function(jQuery, csshttprequest) {
 var AtDCore, EXPORTED_SYMBOLS, TokenIterator;
 
 
@@ -993,7 +993,7 @@ jQuery.fn.addProofreader.defaults = {
   edit_text_content: "<span class=\"AtD_edit_button\"></span>",
   proofread_content: "<span class=\"AtD_proofread_button\"></span>"
 };
-})(jQuery, CSSHttpRequest);
+})(jQuery, csshttprequest);
 
 exports = module.exports = AtD;
 exports.name = "AtD";
