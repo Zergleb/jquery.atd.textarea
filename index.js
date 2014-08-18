@@ -510,7 +510,7 @@ AtD.checkCrossAJAX = function(container_id, callback_f) {
     }
     return;
   }
-  CSSHttpRequest.get(AtD.rpc_css + text + "&lang=" + AtD.rpc_css_lang + "&nocache=" + (new Date().getTime()), function(response) {
+  csshttprequest.get(AtD.rpc_css + text + "&lang=" + AtD.rpc_css_lang + "&nocache=" + (new Date().getTime()), function(response) {
     var count, xml;
     xml = void 0;
     if (navigator.appName === "Microsoft Internet Explorer") {
