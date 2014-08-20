@@ -1,7 +1,9 @@
 var AtD;
 
-var jQuery = require("zergleb~jquery@1.11.1");
-var csshttprequest = require("zergleb~csshttprequest@1.0.0");
+var jQuery = require("jquery");
+var csshttprequest = require("csshttprequest");
+
+var currentVersion = "zergleb~jquery.atd.textarea@1.0.1.5";
 
 (function(jQuery, csshttprequest) {
 var AtDCore, EXPORTED_SYMBOLS, TokenIterator;
@@ -683,27 +685,27 @@ AtD.suggest = function(element) {
     i = 0;
     while (i < errorDescription.suggestions.length) {
       var sugg = errorDescription.suggestions[i];
-      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').useSuggestion('" + sugg.replace(/'/, "\\'") + "')\">" + sugg + "</a>");
+      suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').useSuggestion('" + sugg.replace(/'/, "\\'") + "')\">" + sugg + "</a>");
       i++;
     }
   }
   if (AtD.callback_f !== undefined && AtD.callback_f.explain !== undefined && errorDescription.moreinfo !== undefined) {
-    suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').explainError()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_explain", "Explain...") + "</a>");
+    suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').explainError()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_explain", "Explain...") + "</a>");
     AtD.explainURL = errorDescription.moreinfo;
   }
-  suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreSuggestion()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_ignore_once", "Ignore suggestion") + "</a>");
+  suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').ignoreSuggestion()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_ignore_once", "Ignore suggestion") + "</a>");
   if (AtD.callback_f !== undefined && AtD.callback_f.editSelection !== undefined) {
     if (AtD.callback_f !== undefined && AtD.callback_f.ignore !== undefined) {
-      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
     } else {
-      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
     }
-    suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').editSelection('" + AtD.container + "')\" class=\"spell_sep_bottom spell_sep_top\">" + AtD.getLang("menu_option_edit_selection", "Edit Selection...") + "</a>");
+    suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').editSelection('" + AtD.container + "')\" class=\"spell_sep_bottom spell_sep_top\">" + AtD.getLang("menu_option_edit_selection", "Edit Selection...") + "</a>");
   } else {
     if (AtD.callback_f !== undefined && AtD.callback_f.ignore !== undefined) {
-      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
     } else {
-      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'" + currentVersion + "\').ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
     }
   }
   pos = jQuery(element).offset();
@@ -1002,4 +1004,4 @@ jQuery.fn.addProofreader.defaults = {
 })(jQuery, csshttprequest);
 
 exports = module.exports = AtD;
-exports.name = "AtD";s
+exports.name = "AtD";
