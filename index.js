@@ -1,7 +1,7 @@
 var AtD;
 
-var jQuery = require("jquery");
-var csshttprequest = require("csshttprequest")
+var jQuery = require("zergleb~jquery@1.11.1");
+var csshttprequest = require("zergleb~csshttprequest@1.0.0");
 
 (function(jQuery, csshttprequest) {
 var AtDCore, EXPORTED_SYMBOLS, TokenIterator;
@@ -683,27 +683,27 @@ AtD.suggest = function(element) {
     i = 0;
     while (i < errorDescription.suggestions.length) {
       var sugg = errorDescription.suggestions[i];
-      suggest.append("<a href=\"javascript:AtD.useSuggestion('" + sugg.replace(/'/, "\\'") + "')\">" + sugg + "</a>");
+      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').useSuggestion('" + sugg.replace(/'/, "\\'") + "')\">" + sugg + "</a>");
       i++;
     }
   }
   if (AtD.callback_f !== undefined && AtD.callback_f.explain !== undefined && errorDescription.moreinfo !== undefined) {
-    suggest.append("<a href=\"javascript:AtD.explainError()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_explain", "Explain...") + "</a>");
+    suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').explainError()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_explain", "Explain...") + "</a>");
     AtD.explainURL = errorDescription.moreinfo;
   }
-  suggest.append("<a href=\"javascript:AtD.ignoreSuggestion()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_ignore_once", "Ignore suggestion") + "</a>");
+  suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreSuggestion()\" class=\"spell_sep_top\">" + AtD.getLang("menu_option_ignore_once", "Ignore suggestion") + "</a>");
   if (AtD.callback_f !== undefined && AtD.callback_f.editSelection !== undefined) {
     if (AtD.callback_f !== undefined && AtD.callback_f.ignore !== undefined) {
-      suggest.append("<a href=\"javascript:AtD.ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
     } else {
-      suggest.append("<a href=\"javascript:AtD.ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
     }
-    suggest.append("<a href=\"javascript:AtD.editSelection('" + AtD.container + "')\" class=\"spell_sep_bottom spell_sep_top\">" + AtD.getLang("menu_option_edit_selection", "Edit Selection...") + "</a>");
+    suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').editSelection('" + AtD.container + "')\" class=\"spell_sep_bottom spell_sep_top\">" + AtD.getLang("menu_option_edit_selection", "Edit Selection...") + "</a>");
   } else {
     if (AtD.callback_f !== undefined && AtD.callback_f.ignore !== undefined) {
-      suggest.append("<a href=\"javascript:AtD.ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_always", "Ignore always") + "</a>");
     } else {
-      suggest.append("<a href=\"javascript:AtD.ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
+      suggest.append("<a href=\"javascript:require(\'zergleb~jquery.atd.textarea@1.0.1.3\').ignoreAll('" + AtD.container + "')\" class=\"spell_sep_bottom\">" + AtD.getLang("menu_option_ignore_all", "Ignore all") + "</a>");
     }
   }
   pos = jQuery(element).offset();
@@ -769,7 +769,7 @@ AtD.core = AtD.initCoreModule();
 
 AtD.textareas = {};
 
-AtD.restoreTextArea = function(id) {
+AtD.restoreTextArea = function(id, scope) {
   var content, options;
   options = AtD.textareas[id];
   if (options === undefined || options.before === options.link.html()) {
@@ -787,12 +787,14 @@ AtD.restoreTextArea = function(id) {
   content = content.replace(/\&lt\;/g, "<").replace(/\&gt\;/, ">").replace(/\&amp;/g, "&");
   jQuery("#" + id).remove()
   var originalItem = jQuery("#AtD_txa_" + id)
-  originalItem.attr("id", id).val(content).trigger('input').show();
+  originalItem.attr("id", id).val(content).show().trigger('input');
   options.link.html(options.before);
+  scope.model = content;
+  scope.$apply();
 };
 
-AtD.checkTextAreaCrossAJAX = function(id, linkId, after) {
-  AtD._checkTextArea(id, AtD.checkCrossAJAX, linkId, after);
+AtD.checkTextAreaCrossAJAX = function(scope, id, linkId, after) {
+  AtD._checkTextArea(scope, id, AtD.checkCrossAJAX, linkId, after);
 };
 
 AtD.checkTextArea = function(id, linkId, after) {
@@ -803,7 +805,7 @@ AtD.checkTextArea = function(id, linkId, after) {
   }
 };
 
-AtD._checkTextArea = function(id, commChannel, linkId, after) {
+AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
   var container, disableClick, div, hidden, inProgress, name, node, options, properties, saveProperty, saveme, syncContents, x;
   container = jQuery("#" + id);
   if (AtD.textareas[id] === undefined) {
@@ -813,7 +815,7 @@ AtD._checkTextArea = function(id, commChannel, linkId, after) {
         properties[key] = node.css(key);
       }
     };
-    saveme = ["background-color", "color", "font-size", "font-family", "border-top-width", "border-bottom-width", "border-left-width", "border-right-width", "border-top-style", "border-bottom-style", "border-left-style", "border-right-style", "border-top-color", "border-bottom-color", "border-left-color", "border-right-color", "text-align", "margin-top", "margin-bottom", "margin-left", "margin-right", "width", "line-height", "letter-spacing", "left", "right", "top", "bottom", "position", "padding-left", "padding-right", "padding-top", "padding-bottom"];
+    saveme = ["background-color", "color", "font-size", "font-family", "border-top-width", "border-bottom-width", "border-left-width", "border-right-width", "border-top-style", "border-bottom-style", "border-left-style", "border-right-style", "border-top-color", "border-bottom-color", "border-left-color", "border-right-color", "text-align", "margin-top", "margin-bottom", "margin-left", "margin-right", "height", "line-height", "letter-spacing", "left", "right", "top", "bottom", "position", "padding-left", "padding-right", "padding-top", "padding-bottom"];
     x = 0;
     node = container;
     while (x < saveme.length) {
@@ -832,7 +834,7 @@ AtD._checkTextArea = function(id, commChannel, linkId, after) {
   options = AtD.textareas[id];
   var quickHtml = options.link.html();
   if (quickHtml !== options.before) {
-    AtD.restoreTextArea(id);
+    AtD.restoreTextArea(id, scope);
   } else {
     options.link.html(options.after);
     disableClick = function() {
@@ -844,37 +846,41 @@ AtD._checkTextArea = function(id, commChannel, linkId, after) {
     hidden.attr("id", "AtD_sync_");
     hidden.val(container.val());
     name = container.attr("name");
-    if (navigator.appName === "Microsoft Internet Explorer") {
-      container.attr("id", "AtD_txa_" + id).after("<div id=\"" + id + "\">" + container.val().replace(/\&/g, "&amp;").replace(/[\n\r\f]/g, "<BR class=\"atd_remove_me\">") + "</div>");
-      div = jQuery("#" + id);
-      div.attr("style", options.node.attr("style"));
-      div.attr("class", options.node.attr("class"));
-      div.css({
-        overflow: "auto"
-      });
-      options.style["font-size"] = undefined;
-      options.style["font-family"] = undefined;
-    } else {
-      var afterTextForSpellchecker = "<div id=\"" + id + "\">" + container.val().replace(/\&/g, "&amp;") + "</div>";
-      container.attr("id", "AtD_txa_" + id).after();
-      jQuery("#AtD_txa_" + id).hide();
-      jQuery("#AtD_txa_" + id).after(afterTextForSpellchecker);
-      div = jQuery("#" + id);
-      var onContentChange = function() {
-        var strip = function(html)
-        {
-           var tmp = document.createElement("DIV");
-           tmp.innerHTML = html;
-           return tmp.textContent || tmp.innerText || "";
-        }
-        var htmlContent = strip(jQuery("#" + id).html());
-        htmlContent = htmlContent.replace(/\&lt\;/g, "<").replace(/\&gt\;/, ">").replace(/\&amp;/g, "&");
-        var originalItem = jQuery("#AtD_txa_" + id)
-        originalItem.val(htmlContent).trigger('input');  
+    var onContentChange = function() {
+      var strip = function(html)
+      {
+         var tmp = document.createElement("DIV");
+         tmp.innerHTML = html;
+         return tmp.textContent || tmp.innerText || "";
       }
-      jQuery("#" + id).on('blur', onContentChange);
-      div.attr("style", options.node.attr("style"));
-      div.attr("class", options.node.attr("class"));
+      var htmlContent = strip(jQuery("#" + id).html());
+      htmlContent = htmlContent.replace(/\&lt\;/g, "<").replace(/\&gt\;/, ">").replace(/\&amp;/g, "&");
+      var originalItem = jQuery("#AtD_txa_" + id)
+      scope.model = htmlContent;
+      scope.$apply();
+      originalItem.val(htmlContent).trigger('input');
+      originalItem.trigger('change');
+    }
+    var afterTextForSpellchecker;
+    if (navigator.appName === "Microsoft Internet Explorer") {
+      afterTextForSpellchecker = '<div id="' + id + '">' + container.val().replace(/\&/g, '&amp;').replace(/[\n\r\f]/gm, '<BR class="atd_remove_me">') + '</div>';
+    } else {
+      afterTextForSpellchecker = "<div id=\"" + id + "\">" + container.val().replace(/\&/g, "&amp;") + "</div>";
+    }
+    container.attr("id", "AtD_txa_" + id).after();
+    jQuery("#AtD_txa_" + id).hide();
+    jQuery("#AtD_txa_" + id).after(afterTextForSpellchecker);
+    div = jQuery("#" + id);
+    jQuery("#" + id).on('blur', onContentChange);
+    div.attr("style", options.node.attr("style"));
+    div.attr("class", options.node.attr("class"));
+    if (navigator.appName === "Microsoft Internet Explorer") {
+      div.css({
+        overflow: "auto",
+      });
+      options['style']['font-size'] = undefined;
+      options['style']['font-family'] = undefined;
+    } else {
       div.css({
         overflow: "auto",
         "white-space": "pre-wrap"
@@ -928,7 +934,7 @@ AtD._checkTextArea = function(id, commChannel, linkId, after) {
         window.open(url, "", "width=480,height=380,toolbar=0,status=0,resizable=0,location=0,menuBar=0,left=" + left + ",top=" + top).focus();
       },
       success: function(errorCount) {
-        AtD.restoreTextArea(id);
+        AtD.restoreTextArea(id, scope);
       },
       error: function(reason) {
         options.link.unbind("click", disableClick);
@@ -937,7 +943,7 @@ AtD._checkTextArea = function(id, commChannel, linkId, after) {
         } else {
           alert(AtD.getLang("message_server_error_short", "There was an error communicating with the spell checking service.") + "\n\n" + reason);
         }
-        AtD.restoreTextArea(id);
+        AtD.restoreTextArea(id, scope);
       },
       editSelection: function(element) {
         var text;
@@ -996,4 +1002,4 @@ jQuery.fn.addProofreader.defaults = {
 })(jQuery, csshttprequest);
 
 exports = module.exports = AtD;
-exports.name = "AtD";
+exports.name = "AtD";s
