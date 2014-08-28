@@ -773,7 +773,7 @@ AtD.textareas = {};
 
 AtD.isChecking = false;
 
-AtD.restoreTextArea = function(id, scope) {
+AtD.restoreTextArea = function(id, scope, done) {
   var content = void 0;
   var options = AtD.textareas[id];
 
@@ -795,12 +795,13 @@ AtD.restoreTextArea = function(id, scope) {
   scope.model = content;
   scope.$apply();
   AtD.isChecking = false;
+  if (done && typeof done == "function") done();
 };
 
-AtD.checkTextAreaCrossAJAX = function(scope, id, linkId, after) {
+AtD.checkTextAreaCrossAJAX = function(scope, id, linkId, after, callback) {
   if (AtD.isChecking) return;
   AtD.isChecking = true;
-  AtD._checkTextArea(scope, id, AtD.checkCrossAJAX, linkId, after);
+  AtD._checkTextArea(scope, id, AtD.checkCrossAJAX, linkId, after, callback);
 };
 
 AtD.checkTextArea = function(id, linkId, after) {
@@ -811,7 +812,7 @@ AtD.checkTextArea = function(id, linkId, after) {
   }
 };
 
-AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
+AtD._checkTextArea = function(scope, id, commChannel, linkId, after, done) {
   var container = jQuery("#" + id);
 
   // No textarea? Then make one.
@@ -846,7 +847,7 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
 
   // Check state via link values.
   if (quickHtml !== options.before) {
-    AtD.restoreTextArea(id, scope);
+    AtD.restoreTextArea(id, scope, done);
     jQuery("#" + id).show();
     return;
   }
@@ -906,7 +907,7 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
 
     // ESC ket to exit Spell Check Mode.
     if (event.keyCode == 27) {
-      AtD.restoreTextArea(id, scope);
+      AtD.restoreTextArea(id, scope, done);
       jQuery("#" + id).show();
       return;
     }
@@ -959,14 +960,14 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
       window.open(url, "", "width=480,height=380,toolbar=0,status=0,resizable=0,location=0,menuBar=0,left=" + left + ",top=" + top).focus();
     },
     success: function(errorCount) {
-      AtD.restoreTextArea(id, scope);
+      AtD.restoreTextArea(id, scope, done);
     },
     error: function(reason) {
       var errorMessage = AtD.getLang("message_server_error_short", "There was an error communicating with the spell checking service.");
       options.link.unbind("click", disableClick);
       if (reason) errorMessage += "\n\n" + reason;
       alert(errorMessage);
-      AtD.restoreTextArea(id, scope);
+      AtD.restoreTextArea(id, scope, done);
     },
     editSelection: function(element) {
       var text = prompt(AtD.getLang("dialog_replace_selection", "Replace selection with:"), element.text());
