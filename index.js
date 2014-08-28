@@ -784,15 +784,12 @@ AtD.restoreTextArea = function(id, scope) {
   if (navigator.appName === "Microsoft Internet Explorer") {
     content = jQuery("#" + id).html().replace(/<BR.*?class.*?atd_remove_me.*?>/g, "\n");
   }
-  //  else {
-  //   content = jQuery("#" + id).html();
-  // }
   content = jQuery("#" + id).html();
   content = content.replace(/\&lt\;/g, "<").replace(/\&gt\;/, ">").replace(/\&amp;/g, "&");
   jQuery("#" + id).remove();
   var originalItem = jQuery("#AtD_txa_" + id);
   originalItem.attr("id", id).val(content).show().trigger('input');
-  options.link.html(options.before);
+  options.link.html(options.before).css({"color":"#b3b2b3"});
   scope.model = content;
   scope.$apply();
 };
@@ -815,7 +812,7 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
   // No textarea? Then make one.
   if (AtD.textareas[id] === undefined) {
     var properties = {};
-    var styles = ["background-color", "color", "font-size", "font-family", "border-top-width", "border-bottom-width", "border-left-width", "border-right-width", "border-top-style", "border-bottom-style", "border-left-style", "border-right-style", "border-top-color", "border-bottom-color", "border-left-color", "border-right-color", "border-radius", "text-align", "margin-top", "margin-bottom", "margin-left", "margin-right", "height", "line-height", "letter-spacing", "left", "right", "top", "bottom", "position", "padding-left", "padding-right", "padding-top", "padding-bottom", "resize"];
+    var styles = ["color", "font-size", "font-family", "border-top-width", "border-bottom-width", "border-left-width", "border-right-width", "border-top-style", "border-bottom-style", "border-left-style", "border-right-style", "border-top-color", "border-bottom-color", "border-left-color", "border-right-color", "border-radius", "text-align", "margin-top", "margin-bottom", "margin-left", "margin-right", "height", "line-height", "letter-spacing", "left", "right", "top", "bottom", "position", "padding-left", "padding-right", "padding-top", "padding-bottom", "resize"];
 
     // Copy the styles we care about.
     for (var prop in styles) {
@@ -838,7 +835,7 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
   var options = AtD.textareas[id];
   var quickHtml = options.link.html();
 
-  // Check state via link values.
+  // Check state via link values. Ugly.
   if (quickHtml !== options.before) {
     AtD.restoreTextArea(id, scope);
     jQuery("#" + id).show();
@@ -850,7 +847,6 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
   var disableClick = function() {
     return false;
   };
-
   options.link.click(disableClick);
   var div = void 0;
   var hidden = jQuery("<input type=\"hidden\" />").attr("id", "AtD_sync_").val(container.val());
@@ -871,21 +867,23 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
     originalItem.trigger('change');
   };
 
-  var afterTextForSpellchecker;
-
+  // Copy verbiage from textarea.
+  var afterTextForSpellchecker = container.val().replace(/\&/g, '&amp;');
   if (navigator.appName === "Microsoft Internet Explorer") {
-    afterTextForSpellchecker = '<div id="' + id + '">' + container.val().replace(/\&/g, '&amp;').replace(/[\n\r\f]/gm, '<BR class="atd_remove_me">') + '</div>';
-  } else {
-    afterTextForSpellchecker = "<div id=\"" + id + "\">" + container.val().replace(/\&/g, "&amp;") + "</div>";
+    afterTextForSpellchecker =  container.val().replace(/\&/g, '&amp;').replace(/[\n\r\f]/gm, '<BR class="atd_remove_me">');
   }
+
+  // Update textarea, then hide it.
   container.attr("id", "AtD_txa_" + id).after();
   jQuery("#AtD_txa_" + id).hide();
-  jQuery("#AtD_txa_" + id).after(afterTextForSpellchecker);
-  div = jQuery("#" + id)
-          .on('blur', onContentChange)
-          .attr("style", options.node.attr("style"))
-          .attr("class", options.node.attr("class"))
-          .css({"overflow": "auto" });
+
+  // Create a new DIV for the editable area, then bind events and styles.
+  jQuery("#AtD_txa_" + id).after('<div id="' + id + '">' + afterTextForSpellchecker + '</div>');
+
+  div = jQuery("#" + id).on('blur', onContentChange)
+                        .attr("style", options.node.attr("style"))
+                        .attr("class", options.node.attr("class"))
+                        .css({"overflow": "auto" });
   if (navigator.appName === "Microsoft Internet Explorer") {
     options['style']['font-size'] = undefined;
     options['style']['font-family'] = undefined;
@@ -894,9 +892,21 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
        .attr("contenteditable", "true")
        .attr("spellcheck", false);
   }
-  div.keypress(function(event) {
+
+  div.keydown(function(event) {
+
+    // ESC ket to exit Spell Check Mode.
+    if (event.keyCode == 27) {
+      AtD.restoreTextArea(id, scope);
+      jQuery("#" + id).show();
+      return;
+    }
+
+    // Disallow carriage returns.
     return event.keyCode !== 13;
   });
+
+  // Attach temporary hidden input to hold verbiage.
   hidden.attr("name", name);
   div.after(hidden);
 
@@ -928,8 +938,10 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
      .height(options.height);
 
   // Call the Spell Check service.
+  options.link.html("checking...").css({"color":"#000000"});
   commChannel(id, {
     ready: function(errorCount) {
+      options.link.html(after).css({"color":"#ee4036"});
       options.link.unbind("click", disableClick);
     },
     explain: function(url) {
@@ -956,6 +968,7 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
     }
   });
 
+  // Finally, display the new contenteditable div.
   jQuery("#" + id).show();
 };
 
