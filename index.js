@@ -3,7 +3,7 @@ var AtD;
 var jQuery = require("jquery");
 var csshttprequest = require("csshttprequest");
 
-var currentVersion = "benxamin~jquery.atd.textarea@1.0.1.5";
+var currentVersion = "zergleb~jquery.atd.textarea@1.0.1.5";
 
 (function(jQuery, csshttprequest) {
 var AtDCore, EXPORTED_SYMBOLS, TokenIterator;
@@ -933,26 +933,22 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
       options.link.unbind("click", disableClick);
     },
     explain: function(url) {
-      var left, top;
-      left = (screen.width / 2) - (480 / 2);
-      top = (screen.height / 2) - (380 / 2);
+      var left = (screen.width / 2) - (480 / 2);
+      var top = (screen.height / 2) - (380 / 2);
       window.open(url, "", "width=480,height=380,toolbar=0,status=0,resizable=0,location=0,menuBar=0,left=" + left + ",top=" + top).focus();
     },
     success: function(errorCount) {
       AtD.restoreTextArea(id, scope);
     },
     error: function(reason) {
+      var errorMessage = AtD.getLang("message_server_error_short", "There was an error communicating with the spell checking service.");
       options.link.unbind("click", disableClick);
-      if (reason === undefined) {
-        alert(AtD.getLang("message_server_error_short", "There was an error communicating with the spell checking service."));
-      } else {
-        alert(AtD.getLang("message_server_error_short", "There was an error communicating with the spell checking service.") + "\n\n" + reason);
-      }
+      if (reason) errorMessage += "\n\n" + reason;
+      alert(errorMessage);
       AtD.restoreTextArea(id, scope);
     },
     editSelection: function(element) {
-      var text;
-      text = prompt(AtD.getLang("dialog_replace_selection", "Replace selection with:"), element.text());
+      var text = prompt(AtD.getLang("dialog_replace_selection", "Replace selection with:"), element.text());
       if (text) {
         jQuery(element).html(text);
         AtD.core.removeParent(element);
