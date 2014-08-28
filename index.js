@@ -771,6 +771,8 @@ AtD.core = AtD.initCoreModule();
 
 AtD.textareas = {};
 
+AtD.isChecking = false;
+
 AtD.restoreTextArea = function(id, scope) {
   var content = void 0;
   var options = AtD.textareas[id];
@@ -792,9 +794,12 @@ AtD.restoreTextArea = function(id, scope) {
   options.link.html(options.before).css({"color":"#b3b2b3"});
   scope.model = content;
   scope.$apply();
+  AtD.isChecking = false;
 };
 
 AtD.checkTextAreaCrossAJAX = function(scope, id, linkId, after) {
+  if (AtD.isChecking) return;
+  AtD.isChecking = true;
   AtD._checkTextArea(scope, id, AtD.checkCrossAJAX, linkId, after);
 };
 
@@ -943,6 +948,7 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
     ready: function(errorCount) {
       options.link.html(after).css({"color":"#ee4036"});
       options.link.unbind("click", disableClick);
+      AtD.isChecking = false;
     },
     explain: function(url) {
       var left = (screen.width / 2) - (480 / 2);
