@@ -837,10 +837,14 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
     };
   }
 
+  // Store values to check.
   var options = AtD.textareas[id];
   var quickHtml = options.link.html();
 
-  // Check state via link values. Ugly.
+  // Tell UI we're running the spell checker.
+  options.link.html("checking...").css({"color":"#000000"});
+
+  // Check state via link values.
   if (quickHtml !== options.before) {
     AtD.restoreTextArea(id, scope);
     jQuery("#" + id).show();
@@ -943,7 +947,6 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after) {
      .height(options.height);
 
   // Call the Spell Check service.
-  options.link.html("checking...").css({"color":"#000000"});
   commChannel(id, {
     ready: function(errorCount) {
       options.link.html(after).css({"color":"#ee4036"});
