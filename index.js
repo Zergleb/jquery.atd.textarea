@@ -3,7 +3,7 @@ var AtD;
 var jQuery = require("jquery");
 var csshttprequest = require("csshttprequest");
 
-var currentVersion = "zergleb~jquery.atd.textarea@1.0.2.1";
+var currentVersion = "zergleb~jquery.atd.textarea@1.0.2.2";
 
 (function(jQuery, csshttprequest) {
 var AtDCore, EXPORTED_SYMBOLS, TokenIterator;
