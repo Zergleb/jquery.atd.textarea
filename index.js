@@ -822,8 +822,10 @@ AtD._checkTextArea = function(scope, id, commChannel, linkId, after, done) {
 
     // Copy the styles we care about.
     for (var prop in styles) {
-      if (container.css(styles[prop]) !== "") {
-        properties[styles[prop]] = container.css(styles[prop]);
+      if (typeof styles[prop] === "string") {
+        if (container.css(styles[prop]) !== "") {
+          properties[styles[prop]] = container.css(styles[prop]);
+        }
       }
     }
 
